@@ -1,13 +1,29 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+
+  const [apiResponse, setApiResponse] = useState("");
+  
+  useEffect(() => {
+    async function callApi() {
+      const request = await axios.get(`${process.env.REACT_APP_API}/testApi`).then(res => {
+        console.log(res);
+        setApiResponse(res.data);
+      });
+      return request;
+    }
+    callApi();
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          {apiResponse}
         </p>
         <a
           className="App-link"
