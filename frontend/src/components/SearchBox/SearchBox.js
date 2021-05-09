@@ -44,7 +44,7 @@ function SearchBox() {
       <div>
          <h3>SearchBox</h3>
          <div style={{ marginBottom: 16, maxWidth: 500, textAlign:'center', margin: 'auto' }}>
-               <Input.Search addonBefore={selectBefore} placeholder={"Search in "+searchEngine} onChange={changeValue} onSearch={redirectToSearchEngine}/>
+               <Input.Search size="large" addonBefore={selectBefore} placeholder={"Search in "+searchEngine} onChange={changeValue} onSearch={redirectToSearchEngine}/>
          </div>
       </div>
    )

@@ -11,33 +11,73 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { notification } from 'antd';
 
 function App() {
 
-  const [currentWeather, setCurrentWeather] = useState("");
+  const [locationInfo, setLocationInfo] = useState("");
   const [currentDay, setCurrentDay] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [weatherLocation, setWeatherLocation] = useState("");
+  const [searchByLocation, setSearchByLocation] = useState(false);
 
   const dispatch = useDispatch();
   
   useEffect(() => {
+    getLocation();
     const date = new Date();
     const dayInWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     setCurrentDay(dayInWeek[date.getDay()]);
     async function callApi() {
-      const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`).then(res => {
-        setCurrentWeather(res.data);
-        dispatch(getRobots(res.data));
+      const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`, {
+        params: {latitude: latitude,
+        longitude: longitude,
+        location: weatherLocation,
+        searchByLocation: searchByLocation
+      }
+      }).then(res => {
+        if(res.data.error) {
+          openNotification('error');
+        }
+        else{
+          setLocationInfo(res.data);
+          dispatch(getRobots(res.data));
+        }
       });
       return request;
     }
     callApi();
-  }, []);
+  }, [latitude, longitude, weatherLocation]);
+
+  const getLocation = () => {
+    if(navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+      });
+  }
+  }
+
+  const getWeatherByLocation = (search_term) => {
+    setWeatherLocation(search_term);
+    setSearchByLocation(true);
+  }
+
+  const openNotification = () => {
+    notification.error({
+      message: `Error`,
+      description: 'Location Not Found.',
+      placement: 'bottomRight',
+      duration: 5,
+    });
+  };
 
   return (
-    currentWeather &&
+    locationInfo &&
     <Router>
       <div className="App">
-        <Home currentWeather={currentWeather}/>
+        <Home locationInfo={locationInfo} getWeatherByLocation={getWeatherByLocation}/>
       </div>
     </Router>
   );
