@@ -4,7 +4,7 @@ import './LocationInfo.css'
 
 function LocationInfo(props) {
 
-    const { locationInfo, getWeatherByLocation } = props;
+    const { locationInfo, getWeatherByLocation, temperatureScale } = props;
     const [currentDay, setCurrentDay] = useState("");
     const [localTime, setLocalTime] = useState("");
 
@@ -36,7 +36,7 @@ function LocationInfo(props) {
                         <img src={locationInfo.current.condition.icon} alt="" />
                     </div>
                     <div className="col-md-6">
-                        <h3>{locationInfo.current.temp_c}°C</h3>
+                        <h3>{ temperatureScale == 'celsius' ? locationInfo.current.temp_c+"°C" : locationInfo.current.temp_f+"°F" }</h3>
                     </div>
                 </div>
                 <h3>{locationInfo.current.condition.text}</h3>

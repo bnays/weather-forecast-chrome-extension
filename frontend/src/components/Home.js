@@ -1,13 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import LocationInfo from './LocationInfo/LocationInfo'
 import SearchBox from './SearchBox/SearchBox'
 import { Layout, Menu, Breadcrumb } from 'antd';
 import './Home.css';
+import TemperatureScaleSelect from './LocationInfo/TemperatureScaleSelect/TemperatureScaleSelect';
 
 const { Header, Content, Footer } = Layout;
 
 function Home(props) {
     const { locationInfo, getWeatherByLocation } = props;
+    const [temperatureScale, setTemperatureScale] = useState('celsius');
+
+    const changeTemperatureScale = (value) => {
+        setTemperatureScale(value);
+    }
     
     return (
         <div>
@@ -26,10 +32,11 @@ function Home(props) {
                     <Breadcrumb.Item>List</Breadcrumb.Item>
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
+                <TemperatureScaleSelect temperatureScale={temperatureScale} changeTemperatureScale={changeTemperatureScale}/>
                 <div className="row">
                     <div className="col-md-12">
-                        <SearchBox></SearchBox>
-                        <LocationInfo locationInfo={locationInfo} getWeatherByLocation={getWeatherByLocation} ></LocationInfo>
+                        <SearchBox />
+                        <LocationInfo locationInfo={locationInfo} getWeatherByLocation={getWeatherByLocation} temperatureScale={temperatureScale}/>
                     </div>
                 </div>
                 </Content>

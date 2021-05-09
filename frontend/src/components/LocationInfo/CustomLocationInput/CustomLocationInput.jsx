@@ -18,7 +18,7 @@ function CustomLocationInput(props) {
                 size="large" 
                 onChange={changeValue}
                 onSearch={() => getWeatherByLocation(searchTerm)}
-                placeholder="Find Weather By City" 
+                placeholder="Browse Weather By City" 
                 prefix={<CompassOutlined />} 
             />
         </div>
