@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import './App.css';
+import { getRobots } from '../../actions/account';
+import Home from '../../components/Home';
+import 'antd/dist/antd.css';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 function App() {
 
-  const [apiResponse, setApiResponse] = useState("");
+  const [currentWeather, setCurrentWeather] = useState("");
   const [currentDay, setCurrentDay] = useState("");
-  const dayInWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  const dispatch = useDispatch();
   
   useEffect(() => {
     const date = new Date();
+    const dayInWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     setCurrentDay(dayInWeek[date.getDay()]);
     async function callApi() {
       const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`).then(res => {
-        console.log(res.data);
-        setApiResponse(res.data);
+        setCurrentWeather(res.data);
+        dispatch(getRobots(res.data));
       });
       return request;
     }
@@ -22,27 +34,12 @@ function App() {
   }, []);
 
   return (
-    apiResponse &&
-    <div className="App">
-      <header className="App-header">
-        <p>
-          {apiResponse.current.temp_c}°C
-        </p>
-        <p>{apiResponse.location.name}, {apiResponse.location.country}</p>
-        <p>{apiResponse.location.localtime}</p>
-        <p>{currentDay}</p>
-        <p>{apiResponse.current.condition.text}</p>
-        <img src={apiResponse.current.condition.icon} alt="" />
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    currentWeather &&
+    <Router>
+      <div className="App">
+        <Home currentWeather={currentWeather}/>
+      </div>
+    </Router>
   );
 }
 
