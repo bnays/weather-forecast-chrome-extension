@@ -1,8 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "Extension Name",
+  "name": "React Weather App",
   "version": "0.1",
-  "description": "Some Description",
+  "description": "Weather forecast chrome extension ",
+  "chrome_url_overrides": {
+    "newtab": "popup.html"
+  },
   "permissions": [
   ],
   "background": {
