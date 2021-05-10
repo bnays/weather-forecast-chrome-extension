@@ -28,7 +28,6 @@ router.get("/currentWeather", function(req, res) {
 router.get("/historyApi", function(req, res) {
 
     let queryParameter = "";
-
     if(req.query.searchByLocation == 'true') {
         queryParameter = req.query.location;
     }
@@ -42,7 +41,6 @@ router.get("/historyApi", function(req, res) {
     fetch("https://api.weatherapi.com/v1/history.json?key="+process.env.APP_KEY+"&q="+queryParameter+"&dt=2021-05-08")
     .then(res => res.json())
     .then(json => {
-        console.log(json);
         res.send(json);
     })
     .catch(err => console.log(err));

@@ -9,7 +9,7 @@ import HistoryInfo from './HistoryInfo/HistoryInfo';
 const { Header, Content, Footer } = Layout;
 
 function Home(props) {
-    const { locationInfo, historyInfo, getWeatherByLocation } = props;
+    const { locationInfo, historyInfo, getWeatherByLocation, getCompareByLocation } = props;
     const [temperatureScale, setTemperatureScale] = useState('celsius');
 
     const changeTemperatureScale = (value) => {
@@ -38,7 +38,7 @@ function Home(props) {
                     <div className="col-md-12">
                         <SearchBox />
                         <LocationInfo locationInfo={locationInfo} getWeatherByLocation={getWeatherByLocation} temperatureScale={temperatureScale}/>
-                        <HistoryInfo historyInfo={historyInfo}/>
+                        <HistoryInfo historyInfo={historyInfo} temperatureScale={temperatureScale} getCompareByLocation={getCompareByLocation}/>
                     </div>
                 </div>
                 </Content>

@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from "d3";
 import './HourlyG2.css'
+import CompareLocation from './CompareLocation/CompareLocation';
 
 function HourlyG2(props) {
 
-    const { data, width, height } = props;
+    const { data, temperatureScale, getCompareByLocation } = props;
 
     const ref = useRef();
 
     useEffect(() => {
+
+        const temperatureUnit = temperatureScale === "celsius" ? "°C" : "°F";
 
         const datae = [
             "2014-11-15 22:23:22,789",
@@ -26,11 +29,10 @@ function HourlyG2(props) {
             return d3.svg.axis()
             .scale(y)
             .orient("left")
-            //.ticks(5)
         }
 
         const wrap = (text, width) => {
-            console.log(text.text());
+
             text.each(function() {
               var text = d3.select(this);
                 var  words = text.text().split(/\s+/).reverse(),
@@ -42,7 +44,6 @@ function HourlyG2(props) {
                   dy = parseFloat(text.attr("dy")),
                   tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
               while (word = words.pop()) {
-                  console.log(word, "Word");
                 line.push(word);
                 tspan.text(line.join(" "));
                 if (tspan.node().getComputedTextLength() > width) {
@@ -84,6 +85,9 @@ function HourlyG2(props) {
                 .x(function(d) { return x(d.date); })
                 .y(function(d) { return y(d.temp); });
 
+            d3.select("#chart div").remove();
+            d3.select("#chart svg").remove();
+
             var div = d3.select("#chart").append("div")   
                 .attr("class", "tooltip")               
                 .style("opacity", 0);
@@ -94,11 +98,9 @@ function HourlyG2(props) {
             .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            //The format in the CSV, which d3 will read
             var parseDate = d3.time.format("%Y-%m-%d %X");
 
             //format for tooltip
-            //https://github.com/mbostock/d3/wiki/Time-Formatting
             //var formatTime = d3.time.format("%e %b");
             var formatTime = d3.time.format("%e %b %-I:%M %p");
             var formatCount = d3.format(",");
@@ -107,160 +109,171 @@ function HourlyG2(props) {
                 if(d.date) {
                     d.date = parseDate.parse(d.date);
                     d.temp = +d.temp;
-                    console.log(d.date, d.temp);
                 }
             });
 
-            //using imported data to define extent of x and y domains
-  x.domain(d3.extent(data[0].values, function(d) { return d.date; }));
-  y.domain(d3.extent(data[0].values, function(d) { return d.temp; }));
+        //using data to define extent of x and y domains
+        x.domain(d3.extent(data[0].values, function(d) { return d.date; }));
+        y.domain(d3.extent(data[0].values, function(d) { return d.temp; }));
 
-// Draw the y Grid lines
-	svg.append("g")            
-		.attr("class", "grid")
-		.call(make_y_axis()
-			.tickSize(-width, 0, 0)
-			.tickFormat("")
-		)
-  
-  svg.append("path")
-      .datum(data[0].values)
-      .attr("class", "line")
-      .attr("d", line);
+        // Draw the y Grid lines
+        svg.append("g")            
+                .attr("class", "grid")
+                .call(make_y_axis()
+                    .tickSize(-width, 0, 0)
+                    .tickFormat("")
+                )
+        
+                var path = svg.append("path")
+            .datum(data[0].values)
+            .attr("class", "line")
+            .attr("d", line);
 
-      var color = d3.scale.ordinal(d3.schemeCategory10);
+            console.log(path[0][0], "path");
 
-//taken from http://bl.ocks.org/mbostock/3887118
-//and http://www.d3noob.org/2013/01/change-line-chart-into-scatter-plot.html
-//creating a group(g) and will append a circle and 2 lines inside each group
-var g = svg.selectAll()
-        .data(data[0].values).enter().append("g");
+            var totalLength = [path[0][0].getTotalLength()];
 
-   //The markers on the line
-	 g.append("circle")
-         //circle radius is increased
-        .attr("r", 4.5)
-        .style("fill", (d, i) => color(i))
-        .attr("cx", function(d) { return x(d.date); })
-        .attr("cy", function(d) { return y(d.temp); });
-   
-   //The horizontal dashed line that appears when a circle marker is moused over
-	 g.append("line")
-        .attr("class", "x")
-        .attr("id", "dashedLine")
-        .style("stroke", "steelblue")
-        .style("stroke-dasharray", "3,3")
-        .style("opacity", 0)
-        .attr("x1", function(d) { return x(d.date); })
-        .attr("y1", function(d) { return y(d.temp); })
-		    //d3.min gets the min date from the date x-axis scale
-		    .attr("x2", function(d) { return x(d3.min(x)); })
-        .attr("y2", function(d) { return y(d.temp); });
+                console.log(totalLength[0]);
+                // Animate Path
+                d3.select(path[0][0])
+                .attr("stroke-dasharray", totalLength[0] + " " + totalLength[0] ) 
+                .attr("stroke-dashoffset", totalLength[0])
+                .transition()
+                    .duration(2000)
+                    .ease("linear")
+                    .attr("stroke-dashoffset", 0);
 
-  //The vertical dashed line that appears when a circle marker is moused over
-	g.append("line")
-        .attr("class", "y")
-        .attr("id", "dashedLine")
-        .style("stroke", "steelblue")
-        .style("stroke-dasharray", "3,3")
-        .style("opacity", 0)
-        .attr("x1", function(d) { return x(d.date); })
-        .attr("y1", function(d) { return y(d.temp); })
-		    .attr("x2", function(d) { return x(d.date); })
-        .attr("y2", height);
-    
-   //circles are selected again to add the mouseover functions
- 	 g.selectAll("circle")
-			.on("mouseover", function(d) {		
-            div.transition()		
-               .duration(200)		
-               .style("opacity", .9);	
-            div.html(formatCount(d.temp) + " km" + "<br/>" + formatTime(d.date))	
-               .style("left", (d3.event.pageX - 20) + "px")
-      		     .style("top", (d3.event.pageY + 6) + "px");
-	          //selects the horizontal dashed line in the group
-			      d3.select(this.nextElementSibling).transition()		
-                .duration(200)		
-                .style("opacity", .9);
-            //selects the vertical dashed line in the group 
-			      d3.select(this.nextElementSibling.nextElementSibling).transition()		
-                .duration(200)		
-                .style("opacity", .9);	
-            })	
-				
-      .on("mouseout", function(d) {		
-            div.transition()		
-               .duration(500)		
-               .style("opacity", 0);
+            var color = d3.scale.ordinal(d3.schemeCategory10);
 
-			      d3.select(this.nextElementSibling).transition()		
-                .duration(500)		
-                .style("opacity", 0);
+        //creating a group(g) and will append a circle and 2 lines inside each group
+        var g = svg.selectAll()
+                .data(data[0].values).enter().append("g");
 
-			      d3.select(this.nextElementSibling.nextElementSibling).transition()		
-                .duration(500)		
-                .style("opacity", 0);	
-        });
+        //The markers on the line
+            g.append("circle")
+                .attr("r", 4)
+                .style("fill", (d, i) => color(i))
+                .attr("cx", function(d) { return x(d.date); })
+                .attr("cy", function(d) { return y(d.temp); });
+        
+        //The horizontal dashed line that appears when a circle marker is moused over
+            g.append("line")
+                .attr("class", "x")
+                .attr("id", "dashedLine")
+                .style("stroke", "steelblue")
+                .style("stroke-dasharray", "3,3")
+                .style("opacity", 0)
+                .attr("x1", function(d) { return x(d.date); })
+                .attr("y1", function(d) { return y(d.temp); })
+                    //d3.min gets the min date from the date x-axis scale
+                    .attr("x2", function(d) { return x(d3.min(x)); })
+                .attr("y2", function(d) { return y(d.temp); });
 
-svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-	    .selectAll(".tick text")
-      .call(wrap, 35);
+        //The vertical dashed line that appears when a circle marker is moused over
+            g.append("line")
+                .attr("class", "y")
+                .attr("id", "dashedLine")
+                .style("stroke", "steelblue")
+                .style("stroke-dasharray", "3,3")
+                .style("opacity", 0)
+                .attr("x1", function(d) { return x(d.date); })
+                .attr("y1", function(d) { return y(d.temp); })
+                    .attr("x2", function(d) { return x(d.date); })
+                .attr("y2", height);
+            
+        //circles are selected again to add the mouseover functions
+            g.selectAll("circle")
+                    .on("mouseover", function(d) {		
+                    div.transition()		
+                    .duration(200)		
+                    .style("opacity", .9);	
+                    div.html(formatCount(d.temp) + " "+temperatureUnit+"" + "<br/>" + formatTime(d.date))	
+                    .style("left", (d3.event.pageX - 0) + "px")
+                        .style("top", (d3.event.pageY + 0) + "px");
+                    //selects the horizontal dashed line in the group
+                        d3.select(this.nextElementSibling).transition()		
+                        .duration(200)		
+                        .style("opacity", .9);
+                    //selects the vertical dashed line in the group 
+                        d3.select(this.nextElementSibling.nextElementSibling).transition()		
+                        .duration(200)		
+                        .style("opacity", .9);	
+                    })	
+                        
+            .on("mouseout", function(d) {		
+                    div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0);
 
-svg.append("g")
-    .attr("class","xMinorAxis")
-    .attr("transform", "translate(0," + height + ")")
-    .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px'})
-    .call(xMinorAxis)
-    .selectAll("text").remove();
+                        d3.select(this.nextElementSibling).transition()		
+                        .duration(500)		
+                        .style("opacity", 0);
 
-//http://www.d3noob.org/2012/12/adding-axis-labels-to-d3js-graph.html
-svg.append("text")      // text label for the x-axis
-        .attr("x", width / 2 )
-        .attr("y",  height + margin.bottom)
-        .style("text-anchor", "middle")
-        .text("Date Time");
+                        d3.select(this.nextElementSibling.nextElementSibling).transition()		
+                        .duration(500)		
+                        .style("opacity", 0);	
+                });
 
-svg.append("text")      // text label for the y-axis
-        .attr("y",30 - margin.left)
-        .attr("x",50 - (height / 2))
-        .attr("transform", "rotate(-90)")
-        .style("text-anchor", "end")
-        .style("font-size", "16px")
-        .text("Temperature (km)");
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+                .selectAll(".tick text")
+            .call(wrap, 35);
 
-svg.append("text")      // text label for chart Title
-        .attr("x", width / 2 )
-        .attr("y", 0 - (margin.top/2))
-        .style("text-anchor", "middle")
-		.style("font-size", "16px") 
-        .style("text-decoration", "underline") 
-        .text("Hourly Temperature Trend from the past X hours ");
+        svg.append("g")
+            .attr("class","xMinorAxis")
+            .attr("transform", "translate(0," + height + ")")
+            .style({ 'stroke': 'Black', 'fill': 'none', 'stroke-width': '1px'})
+            .call(xMinorAxis)
+            .selectAll("text").remove();
+
+        //http://www.d3noob.org/2012/12/adding-axis-labels-to-d3js-graph.html
+        svg.append("text")      // text label for the x-axis
+                .attr("x", width / 2 )
+                .attr("y",  height + margin.bottom)
+                .style("text-anchor", "middle")
+                .text("Date Time");
+
+        svg.append("text")      // text label for the y-axis
+                .attr("y",30 - margin.left)
+                .attr("x",50 - (height / 2))
+                .attr("transform", "rotate(-90)")
+                .style("text-anchor", "end")
+                .style("font-size", "16px")
+                .text("Temperature ("+temperatureUnit+")");
+
+        svg.append("text")      // text label for chart Title
+                .attr("x", width / 2 )
+                .attr("y", 0 - (margin.top/2))
+                .style("text-anchor", "middle")
+                .style("font-size", "16px") 
+                .style("text-decoration", "underline") 
+                .text("Hourly Temperature Trend from the past X hours ");
 
 
-svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    //text label for the y-axis inside chart
-    /*
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .style("font-size", "16px") 
-      .style("background-color","red")
-      .text("road length (km)");
-    */
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            //text label for the y-axis inside chart
+            /*
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .style("font-size", "16px") 
+            .style("background-color","red")
+            .text("road length (km)");
+            */
 
         }
     }, [data]);
 
     return (
         <div>
-            <div id="chart" />
+            <CompareLocation getCompareByLocation={getCompareByLocation}/>
+            <div id="chart"></div>
         </div>
     )
 }
