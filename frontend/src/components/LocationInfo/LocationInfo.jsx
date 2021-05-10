@@ -10,7 +10,7 @@ function LocationInfo(props) {
 
     useEffect(() => {
         const date = new Date();
-        const dayInWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        // const dayInWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
         setCurrentDay(date.toDateString());
 
         const interval = setInterval(() => {
@@ -36,7 +36,7 @@ function LocationInfo(props) {
                         <img src={locationInfo.current.condition.icon} alt="" />
                     </div>
                     <div className="col-md-6">
-                        <h3>{ temperatureScale == 'celsius' ? locationInfo.current.temp_c+"°C" : locationInfo.current.temp_f+"°F" }</h3>
+                        <h3>{ temperatureScale === 'celsius' ? locationInfo.current.temp_c+"°C" : locationInfo.current.temp_f+"°F" }</h3>
                     </div>
                 </div>
                 <h3>{locationInfo.current.condition.text}</h3>

@@ -2,20 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import './App.css';
-import { getRobots } from '../../actions/account';
+import { getCurrentData, getHistoricalData } from '../../actions/account';
 import Home from '../../components/Home';
 import 'antd/dist/antd.css';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { notification } from 'antd';
 
 function App() {
 
   const [locationInfo, setLocationInfo] = useState("");
+  const [historyInfo, setHistoryInfo] = useState("");
   const [currentDay, setCurrentDay] = useState("");
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
@@ -42,12 +38,31 @@ function App() {
         }
         else{
           setLocationInfo(res.data);
-          dispatch(getRobots(res.data));
+          dispatch(getCurrentData(res.data));
+        }
+      });
+      return request;
+    }
+    async function callHistoryApi() {
+      const request = await axios.get(`${process.env.REACT_APP_API}/historyApi`, {
+        params: {latitude: latitude,
+        longitude: longitude,
+        location: weatherLocation,
+        searchByLocation: searchByLocation
+      }
+      }).then(res => {
+        if(res.data.error) {
+          openNotification('error');
+        }
+        else{
+          setHistoryInfo(res.data);
+          dispatch(getHistoricalData(res.data));
         }
       });
       return request;
     }
     callApi();
+    callHistoryApi();
   }, [latitude, longitude, weatherLocation]);
 
   const getLocation = () => {
@@ -74,10 +89,10 @@ function App() {
   };
 
   return (
-    locationInfo &&
+    locationInfo && historyInfo &&
     <Router>
       <div className="App">
-        <Home locationInfo={locationInfo} getWeatherByLocation={getWeatherByLocation}/>
+        <Home locationInfo={locationInfo} historyInfo={historyInfo} getWeatherByLocation={getWeatherByLocation}/>
       </div>
     </Router>
   );

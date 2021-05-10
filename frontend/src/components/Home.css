@@ -15,5 +15,6 @@
     margin: 16px 0 16px 24px;
 }
 .layout {
-    height: 100vh;
+    min-height: 100vh !important;
+    padding-bottom: 40px;
 }

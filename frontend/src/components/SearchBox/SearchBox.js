@@ -28,10 +28,10 @@ function SearchBox() {
 
    const redirectToSearchEngine = () =>{
       let domainName = "";
-      if(searchEngine == "Google") {
+      if(searchEngine === "Google") {
          domainName = "https://www.google.com/search?q=";
       }
-      else if(searchEngine == "Bing") {
+      else if(searchEngine === "Bing") {
          domainName = "https://www.bing.com/search?q=";
       }
       else {

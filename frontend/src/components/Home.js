@@ -4,11 +4,12 @@ import SearchBox from './SearchBox/SearchBox'
 import { Layout, Menu, Breadcrumb } from 'antd';
 import './Home.css';
 import TemperatureScaleSelect from './LocationInfo/TemperatureScaleSelect/TemperatureScaleSelect';
+import HistoryInfo from './HistoryInfo/HistoryInfo';
 
 const { Header, Content, Footer } = Layout;
 
 function Home(props) {
-    const { locationInfo, getWeatherByLocation } = props;
+    const { locationInfo, historyInfo, getWeatherByLocation } = props;
     const [temperatureScale, setTemperatureScale] = useState('celsius');
 
     const changeTemperatureScale = (value) => {
@@ -37,10 +38,11 @@ function Home(props) {
                     <div className="col-md-12">
                         <SearchBox />
                         <LocationInfo locationInfo={locationInfo} getWeatherByLocation={getWeatherByLocation} temperatureScale={temperatureScale}/>
+                        <HistoryInfo historyInfo={historyInfo}/>
                     </div>
                 </div>
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+                {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
             </Layout>
         </div>
     )
