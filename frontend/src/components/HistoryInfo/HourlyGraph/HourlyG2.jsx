@@ -32,7 +32,6 @@ function HourlyG2(props) {
         }
 
         const wrap = (text, width) => {
-
             text.each(function() {
               var text = d3.select(this);
                 var  words = text.text().split(/\s+/).reverse(),
@@ -58,8 +57,8 @@ function HourlyG2(props) {
 
 
         if(data[0] && data[0] !== undefined) {
-            var margin = {top: 50, right: 20, bottom: 60, left: 90},
-                width = 900 - margin.left - margin.right,
+            var margin = {top: 50, right: 20, bottom: 90, left: 90},
+                width = 1000 - margin.left - margin.right,
                 height = 400 - margin.top - margin.bottom;
 
             var x = d3.time.scale()
@@ -105,11 +104,12 @@ function HourlyG2(props) {
             var formatTime = d3.time.format("%e %b %-I:%M %p");
             var formatCount = d3.format(",");
 
-            data[0].values.forEach(function(d) {
-                if(d.date) {
-                    d.date = parseDate.parse(d.date);
-                    d.temp = +d.temp;
-                }
+            data.forEach(function(d) {
+                d.values.forEach(function(d) {
+                    console.log(d.date.toString());
+                    d.date = parseDate.parse(d.date.toString());
+                    d.temp = +d.temp.toString();
+                });
             });
 
         //using data to define extent of x and y domains
@@ -125,15 +125,12 @@ function HourlyG2(props) {
                 )
         
                 var path = svg.append("path")
-            .datum(data[0].values)
+            .datum(data)
             .attr("class", "line")
             .attr("d", line);
 
-            console.log(path[0][0], "path");
-
             var totalLength = [path[0][0].getTotalLength()];
 
-                console.log(totalLength[0]);
                 // Animate Path
                 d3.select(path[0][0])
                 .attr("stroke-dasharray", totalLength[0] + " " + totalLength[0] ) 
@@ -147,7 +144,7 @@ function HourlyG2(props) {
 
         //creating a group(g) and will append a circle and 2 lines inside each group
         var g = svg.selectAll()
-                .data(data[0].values).enter().append("g");
+                .data(data).enter().append("g");
 
         //The markers on the line
             g.append("circle")
@@ -155,12 +152,13 @@ function HourlyG2(props) {
                 .style("fill", (d, i) => color(i))
                 .attr("cx", function(d) { return x(d.date); })
                 .attr("cy", function(d) { return y(d.temp); });
+
+                var color = d3.scale.ordinal(d3.schemeCategory10);
         
         //The horizontal dashed line that appears when a circle marker is moused over
             g.append("line")
                 .attr("class", "x")
                 .attr("id", "dashedLine")
-                .style("stroke", "steelblue")
                 .style("stroke-dasharray", "3,3")
                 .style("opacity", 0)
                 .attr("x1", function(d) { return x(d.date); })
@@ -266,6 +264,11 @@ function HourlyG2(props) {
             .style("background-color","red")
             .text("road length (km)");
             */
+
+            svg.append("circle").attr("cx",0).attr("cy", 310).attr("r", 6).style("fill", "#69b3a2")
+            svg.append("circle").attr("cx",0).attr("cy", 340).attr("r", 6).style("fill", "#404080")
+            svg.append("text").attr("x", 20).attr("y", 310).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
+            svg.append("text").attr("x", 20).attr("y", 340).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle")
 
         }
     }, [data]);

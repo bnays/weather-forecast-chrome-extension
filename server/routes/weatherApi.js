@@ -38,7 +38,24 @@ router.get("/historyApi", function(req, res) {
         queryParameter = "Kathmandu";
     }
 
-    fetch("https://api.weatherapi.com/v1/history.json?key="+process.env.APP_KEY+"&q="+queryParameter+"&dt=2021-05-08")
+    // let date = new Date();
+    // date = date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
+
+    fetch("https://api.weatherapi.com/v1/history.json?key="+process.env.APP_KEY+"&q="+queryParameter+"&dt=2021-05-10")
+    .then(res => res.json())
+    .then(json => {
+        res.send(json);
+    })
+    .catch(err => console.log(err));
+});
+
+router.get("/compareHistoryApi", function(req, res) {
+
+    let queryParameter = req.query.compareByLocation;
+
+    console.log(queryParameter);
+
+    fetch("https://api.weatherapi.com/v1/history.json?key="+process.env.APP_KEY+"&q="+queryParameter+"&dt=2021-05-10")
     .then(res => res.json())
     .then(json => {
         res.send(json);

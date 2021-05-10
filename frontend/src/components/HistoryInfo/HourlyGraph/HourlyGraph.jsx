@@ -1,68 +1,93 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as d3 from "d3";
 import './HourlyGraph.css'
+import CompareLocation from './CompareLocation/CompareLocation';
+
 
 function HourlyGraph(props) {
 
-    const { data, width, height } = props;
-
-    const ref = useRef();
-
+    const { historyInfo, compareHistoryInfo, temperatureScale, getCompareByLocation, weatherLocation, clearCompareByLocation } = props;
+    
     useEffect(() => {
+        let hourDataArray = [];
+
+        const temperatureUnit = temperatureScale === "celsius" ? "°C" : "°F";
+        
+        historyInfo.forecast.forecastday.map((item, index) => {
+            return (
+                    hourDataArray.push({
+                        name: historyInfo.location.name+", "+historyInfo.location.country,
+                        values: 
+                            item.hour.map((v, i) => {
+                                return (
+                                    temperatureScale === "celsius" ?
+                                { date: v.time, temp: v.temp_c } 
+                                : { date: v.time, temp: v.temp_f } 
+                                )
+                            })
+                })
+            )
+        });
+        if(compareHistoryInfo !== "") {
+            compareHistoryInfo.forecast.forecastday.map((item, index) => {
+                return (
+                        hourDataArray.push({
+                            name: compareHistoryInfo.location.name+", "+compareHistoryInfo.location.country,
+                            values: 
+                                item.hour.map((v, i) => {
+                                    return (
+                                        temperatureScale === "celsius" ?
+                                    { date: ""+v.time, temp: ""+v.temp_c } 
+                                    : { date: ""+v.time, temp: ""+v.temp_f } 
+                                    )
+                                })
+                    })
+                )
+            }); 
+        }
+
+        const data = hourDataArray;
 
         // var data = [
         //     {
         //       name: "USA",
         //       values: [
-        //         { date: "2000-01-10 01:00", price: "100" },
-        //         { date: "2001-01-10 01:00", price: "110" },
-        //         { date: "2002-01-10 01:00", price: "145" },
-        //         { date: "2003-01-10 01:00", price: "241" },
-        //         { date: "2004-01-10 01:00", price: "101" },
-        //         { date: "2005-01-10 01:00", price: "90" },
-        //         { date: "2006-01-10 01:00", price: "10" },
-        //         { date: "2007-01-10 01:00", price: "35" },
-        //         { date: "2008-01-10 01:00", price: "21" },
-        //         { date: "2009-01-10 01:00", price: "201" }
+        //         { date: "2000-01-10 01:00", temp: "100" },
+        //         { date: "2001-01-10 01:00", temp: "110" },
+        //         { date: "2002-01-10 01:00", temp: "145" },
+        //         { date: "2003-01-10 01:00", temp: "241" },
+        //         { date: "2004-01-10 01:00", temp: "101" },
+        //         { date: "2005-01-10 01:00", temp: "90" },
+        //         { date: "2006-01-10 01:00", temp: "10" },
+        //         { date: "2007-01-10 01:00", temp: "35" },
+        //         { date: "2008-01-10 01:00", temp: "21" },
+        //         { date: "2009-01-10 01:00", temp: "201" }
         //       ]
         //     },
         //     {
         //       name: "Canada",
         //       values: [
-        //         { date: "2000-01-10 01:00", price: "200" },
-        //         { date: "2001-01-10 01:00", price: "120" },
-        //         { date: "2002-01-10 01:00", price: "33" },
-        //         { date: "2003-01-10 01:00", price: "21" },
-        //         { date: "2004-01-10 01:00", price: "51" },
-        //         { date: "2005-01-10 01:00", price: "190" },
-        //         { date: "2006-01-10 01:00", price: "120" },
-        //         { date: "2007-01-10 01:00", price: "85" },
-        //         { date: "2008-01-10 01:00", price: "221" },
-        //         { date: "2009-01-10 01:00", price: "101" }
-        //       ]
-        //     },
-        //     {
-        //       name: "Maxico",
-        //       values: [
-        //         { date: "2000-01-10 01:00", price: "50" },
-        //         { date: "2001-01-10 01:00", price: "10" },
-        //         { date: "2002-01-10 01:00", price: "5" },
-        //         { date: "2003-01-10 01:00", price: "71" },
-        //         { date: "2004-01-10 01:00", price: "20" },
-        //         { date: "2005-01-10 01:00", price: "9" },
-        //         { date: "2006-01-10 01:00", price: "220" },
-        //         { date: "2007-01-10 01:00", price: "235" },
-        //         { date: "2008-01-10 01:00", price: "61" },
-        //         { date: "2009-01-10 01:00", price: "10" }
+        //         { date: "2000-01-10 01:00", temp: "200" },
+        //         { date: "2001-01-10 01:00", temp: "120" },
+        //         { date: "2002-01-10 01:00", temp: "33" },
+        //         { date: "2003-01-10 01:00", temp: "21" },
+        //         { date: "2004-01-10 01:00", temp: "51" },
+        //         { date: "2005-01-10 01:00", temp: "190" },
+        //         { date: "2006-01-10 01:00", temp: "120" },
+        //         { date: "2007-01-10 01:00", temp: "85" },
+        //         { date: "2008-01-10 01:00", temp: "221" },
+        //         { date: "2009-01-10 01:00", temp: "101" }
         //       ]
         //     }
         //   ];
 
 
         if(data[0] && data[0] !== undefined) {
-            var width = 500;
-            var height = 300;
+            var width = 900;
+            var height = 400;
             var margin = 50;
+            var marginTop = 70;
+            
             var duration = 250;
     
             var lineOpacity = "0.25";
@@ -77,14 +102,12 @@ function HourlyGraph(props) {
             var circleRadiusHover = 6;
     
             /* Format Data */
-            var parseDate = d3.timeParse("%Y-%m-%d %M:%S");
+            var parseDate = d3.timeParse("%Y-%m-%d %H:%M");
             data.forEach(function(d) {
                 d.values.forEach(function(d) {
-                    console.log(d.date, "Not Parsed Date Time");
-                    d.date = parseDate(d.date);
-                    console.log(d.date);
-                d.price = +d.price;
-            });
+                    d.date = parseDate(d.date.toString());
+                    d.temp = +d.temp.toString();
+                });
             });
     
             /* Scale */
@@ -95,10 +118,13 @@ function HourlyGraph(props) {
     
             var yScale = d3
             .scaleLinear()
-            .domain([0, d3.max(data[0].values, d => d.price)])
+            .domain([0, d3.max(data[0].values, d => d.temp)])
             .range([height - margin, 0]);
     
             var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+            d3.select("#chart div").remove();
+            d3.select("#chart svg").remove();
     
             /* Add SVG */
             var svg = d3
@@ -108,12 +134,21 @@ function HourlyGraph(props) {
             .attr("height", height + margin + "px")
             .append("g")
             .attr("transform", `translate(${margin}, ${margin})`);
+
+            var div = d3.select("#chart").append("div")   
+                .attr("class", "tooltip")               
+                .style("opacity", 0);
+
+            //format for tooltip
+            //var formatTime = d3.time.format("%e %b");
+            var formatTime = d3.timeFormat("%e %b %-I:%M %p");
+            var formatCount = d3.format(",");
     
             /* Add line into SVG */
             var line = d3
             .line()
             .x(d => xScale(d.date))
-            .y(d => yScale(d.price));
+            .y(d => yScale(d.temp));
     
             let lines = svg.append("g").attr("class", "lines");
     
@@ -131,11 +166,13 @@ function HourlyGraph(props) {
                 .text(d.name)
                 .attr("text-anchor", "middle")
                 .attr("x", (width - margin) / 2)
-                .attr("y", 5);
+                .attr("y", height-80);
             })
             .on("mouseout", function(d) {
                 svg.select(".title-text").remove();
-            })
+            });
+
+            var path = svg.selectAll(".line-group")
             .append("path")
             .attr("class", "line")
             .attr("d", d => line(d.values))
@@ -156,6 +193,32 @@ function HourlyGraph(props) {
                 .style("stroke-width", lineStroke)
                 .style("cursor", "none");
             });
+
+            console.log(path.nodes()[0].getTotalLength());
+            var totalLength = [];
+            if(path.nodes()[1]) {
+                totalLength = [path.nodes()[0].getTotalLength(), path.nodes()[1].getTotalLength()];
+            }
+            else {
+                totalLength = [path.nodes()[0].getTotalLength()];
+            }
+
+            d3.select(path.nodes()[0])
+            .attr("stroke-dasharray", totalLength[0] + " " + totalLength[0] ) 
+            .attr("stroke-dashoffset", totalLength[0])
+            .transition()
+                .duration(2000)
+                .ease(d3.easeLinear)
+                .attr("stroke-dashoffset", 0);
+            if(path.nodes()[1]) {
+                d3.select(path.nodes()[1])
+                .attr("stroke-dasharray", totalLength[1] + " " + totalLength[1] ) 
+                .attr("stroke-dashoffset", totalLength[1])
+                .transition()
+                    .duration(2000)
+                    .ease(d3.easeLinear)
+                    .attr("stroke-dashoffset", 0);
+            }
     
             /* Add circles in the line */
             lines
@@ -169,26 +232,22 @@ function HourlyGraph(props) {
             .enter()
             .append("g")
             .attr("class", "circle")
-            .on("mouseover", function(i, d) {
-                d3.select(this)
-                .style("cursor", "pointer")
-                .append("text")
-                .attr("class", "text")
-                .text(`${d.price}`)
-                .attr("x", d => xScale(d.date) + 5)
-                .attr("y", d => yScale(d.price) - 10);
+            .on("mouseover", function(event, d) {
+                div.transition()		
+                    .duration(200)		
+                    .style("opacity", .9);
+                    div.html(formatCount(d.temp) + " "+temperatureUnit+"" + "<br/>" + formatTime(d.date))	
+                    .style("left", (event.pageX - 0) + "px")
+                        .style("top", (event.pageY + 0) + "px");
             })
-            .on("mouseout", function(d) {
-                d3.select(this)
-                .style("cursor", "none")
-                .transition()
-                .duration(duration)
-                .selectAll(".text")
-                .remove();
+            .on("mouseout", function(d) {		
+                div.transition()		
+                .duration(500)		
+                .style("opacity", 0);
             })
             .append("circle")
             .attr("cx", d => xScale(d.date))
-            .attr("cy", d => yScale(d.price))
+            .attr("cy", d => yScale(d.temp))
             .attr("r", circleRadius)
             .style("opacity", circleOpacity)
             .on("mouseover", function(d) {
@@ -212,23 +271,43 @@ function HourlyGraph(props) {
             .append("g")
             .attr("class", "x axis")
             .attr("transform", `translate(0, ${height - margin})`)
+            .style("font-size", "14px")
             .call(xAxis);
     
             svg
             .append("g")
             .attr("class", "y axis")
+            .style("font-size", "14px")
             .call(yAxis)
             .append("text")
-            .attr("y", 15)
+            .attr("y", -35)
+            .attr("x", 90 - (height / 2))
             .attr("transform", "rotate(-90)")
             .attr("fill", "#000")
-            .text("Total values");
+            .style("font-size", "16px")
+            .text("Temperature("+temperatureUnit+")");
+
+            svg.append("text")      // text label for chart Title
+            .attr("x", width / 2 )
+            .attr("y", 0 - (marginTop/2))
+            .style("text-anchor", "middle")
+            .style("font-size", "16px") 
+            .style("text-decoration", "underline") 
+            .text("Hourly Temperature Trend from the past X hours ("+temperatureUnit+")");
+
+            svg.append("text")      // text label for the x-axis
+            .attr("x", width / 2 )
+            .attr("y",  height)
+            .style("text-anchor", "middle")
+            .text("Date Time");
         }
 
-    }, [data]);
+    
+        }, [temperatureScale, historyInfo, compareHistoryInfo, weatherLocation]);
 
     return (
         <div>
+            <CompareLocation getCompareByLocation={getCompareByLocation} clearCompareByLocation={clearCompareByLocation}/>
             <div id="chart" />
         </div>
     )

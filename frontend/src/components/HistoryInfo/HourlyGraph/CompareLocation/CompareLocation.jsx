@@ -3,7 +3,7 @@ import { Input } from 'antd';
 
 function CompareLocation(props) {  
 
-    const { getCompareByLocation } = props;
+    const { getCompareByLocation, clearCompareByLocation } = props;
 
     const [searchTerm, setSearchTerm] = useState('');
 

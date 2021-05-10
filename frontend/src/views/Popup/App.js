@@ -24,56 +24,14 @@ function App() {
   
   useEffect(() => {
     getLocation();
-    const date = new Date();
-    // const dayInWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    // setCurrentDay(dayInWeek[date.getDay()]);
-    async function callApi() {
-      const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`, {
-        params: {latitude: latitude,
-        longitude: longitude,
-        location: weatherLocation,
-        searchByLocation: searchByLocation
-      }
-      }).then(res => {
-        if(res.data.error) {
-          openNotification('error');
-        }
-        else{
-          setLocationInfo(res.data);
-          dispatch(getCurrentData(res.data));
-        }
-      });
-      return request;
-    }
-    async function callHistoryApi() {
-      const request = await axios.get(`${process.env.REACT_APP_API}/historyApi`, {
-        params: {latitude: latitude,
-        longitude: longitude,
-        location: weatherLocation,
-        searchByLocation: searchByLocation
-      }
-      }).then(res => {
-        if(res.data.error) {
-          openNotification('error');
-        }
-        else{
-          setHistoryInfo(res.data);
-          dispatch(getHistoricalData(res.data));
-        }
-      });
-      return request;
-    }
     callApi();
     callHistoryApi();
-  }, [latitude, longitude, weatherLocation]);
+  }, [dispatch, latitude, longitude, weatherLocation, searchByLocation]);
 
   useEffect(() => {
     async function callHistoryApi() {
-      const request = await axios.get(`${process.env.REACT_APP_API}/historyApi`, {
-        params: {latitude: latitude,
-        longitude: longitude,
-        location: weatherLocation,
-        searchByLocation: searchByLocation,
+      const request = await axios.get(`${process.env.REACT_APP_API}/compareHistoryApi`, {
+        params: {
         compareByLocation: compareByLocation
       }
       }).then(res => {
@@ -81,16 +39,54 @@ function App() {
           openNotification('error');
         }
         else{
-          setCompareByLocation(res.data);
+          setCompareHistoryInfo(res.data);
           dispatch(getCompareHistoricalData(res.data));
         }
       });
       return request;
     }
-
-    compareByLocation !== "" && callHistoryApi();
+    if(compareByLocation !== "") {
+      callHistoryApi();
+    }
     
-  }, [compareByLocation])
+  }, [dispatch, compareByLocation])
+
+  async function callApi() {
+    const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`, {
+      params: {latitude: latitude,
+      longitude: longitude,
+      location: weatherLocation,
+      searchByLocation: searchByLocation
+    }
+    }).then(res => {
+      if(res.data.error) {
+        openNotification('error');
+      }
+      else{
+        setLocationInfo(res.data);
+        dispatch(getCurrentData(res.data));
+      }
+    });
+    return request;
+  }
+  async function callHistoryApi() {
+    const request = await axios.get(`${process.env.REACT_APP_API}/historyApi`, {
+      params: {latitude: latitude,
+      longitude: longitude,
+      location: weatherLocation,
+      searchByLocation: searchByLocation
+    }
+    }).then(res => {
+      if(res.data.error) {
+        openNotification('error');
+      }
+      else{
+        setHistoryInfo(res.data);
+        dispatch(getHistoricalData(res.data));
+      }
+    });
+    return request;
+  }
 
   const getLocation = () => {
     if(navigator.geolocation) {
@@ -104,6 +100,11 @@ function App() {
   const getWeatherByLocation = (search_term) => {
     setWeatherLocation(search_term);
     setSearchByLocation(true);
+  }
+
+  const clearCompareByLocation = () => {
+    setSearchByLocation(true);
+    callHistoryApi();
   }
 
   const getCompareByLocation = (location) => {
@@ -123,7 +124,15 @@ function App() {
     locationInfo && historyInfo &&
     <Router>
       <div className="App">
-        <Home locationInfo={locationInfo} historyInfo={historyInfo} getWeatherByLocation={getWeatherByLocation} getCompareByLocation={getCompareByLocation}/>
+        <Home 
+          locationInfo={locationInfo} 
+          historyInfo={historyInfo} 
+          getWeatherByLocation={getWeatherByLocation} 
+          getCompareByLocation={getCompareByLocation}
+          compareHistoryInfo={compareHistoryInfo}
+          weatherLocation={weatherLocation}
+          clearCompareByLocation={clearCompareByLocation}
+        />
       </div>
     </Router>
   );
