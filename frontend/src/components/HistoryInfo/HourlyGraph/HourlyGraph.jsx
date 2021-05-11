@@ -259,7 +259,7 @@ function HourlyGraph(props) {
             .style("text-anchor", "middle")
             .style("font-size", "16px") 
             .style("text-decoration", "underline") 
-            .text("Hourly Temperature Trend from the past X hours ("+temperatureUnit+")");
+            .text("Hourly Temperature Trend from the past 24 hours ("+temperatureUnit+")");
 
             svg.append("text")      // text label for the x-axis
             .attr("x", width / 2 )

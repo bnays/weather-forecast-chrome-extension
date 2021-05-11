@@ -40,7 +40,7 @@ function LocationInfo(props) {
                         </Col>
                         <Col span={8} xs={{ order: 2 }} sm={{ order: 1 }} md={{ order: 4 }} lg={{ order: 3 }}>
                             <div className="weather_info_image">
-                                <img src={"./images/"+locationInfo.current.condition.icon.split("/")[6]} alt="" />
+                                <img src={"./images/"+locationInfo.current.condition.icon.split("/")[5]+"/"+locationInfo.current.condition.icon.split("/")[6]} alt="" />
                             </div>
                         </Col>
                         <Col span={8} xs={{ order: 3 }} sm={{ order: 4 }} md={{ order: 2 }} lg={{ order: 1 }}>
