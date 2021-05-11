@@ -3,6 +3,9 @@
   "background.js.map": "/weather-forecast-chrome-extension/frontend/static/js/background.js.map",
   "content.js": "/weather-forecast-chrome-extension/frontend/static/js/content.js",
   "content.js.map": "/weather-forecast-chrome-extension/frontend/static/js/content.js.map",
+  "index.css": "/weather-forecast-chrome-extension/frontend/static/css/index.css",
+  "index.js": "/weather-forecast-chrome-extension/frontend/static/js/index.js",
+  "index.js.map": "/weather-forecast-chrome-extension/frontend/static/js/index.js.map",
   "options.css": "/weather-forecast-chrome-extension/frontend/static/css/options.css",
   "options.js": "/weather-forecast-chrome-extension/frontend/static/js/options.js",
   "options.js.map": "/weather-forecast-chrome-extension/frontend/static/js/options.js.map",
@@ -11,8 +14,10 @@
   "popup.js.map": "/weather-forecast-chrome-extension/frontend/static/js/popup.js.map",
   "index.html": "/weather-forecast-chrome-extension/frontend/index.html",
   "options.html": "/weather-forecast-chrome-extension/frontend/options.html",
+  "static/css/index.css.map": "/weather-forecast-chrome-extension/frontend/static/css/index.css.map",
   "static/css/options.css.map": "/weather-forecast-chrome-extension/frontend/static/css/options.css.map",
   "static/css/popup.css.map": "/weather-forecast-chrome-extension/frontend/static/css/popup.css.map",
+  "static/js/index.js.LICENSE.txt": "/weather-forecast-chrome-extension/frontend/static/js/index.js.LICENSE.txt",
   "static/js/options.js.LICENSE.txt": "/weather-forecast-chrome-extension/frontend/static/js/options.js.LICENSE.txt",
   "static/js/popup.js.LICENSE.txt": "/weather-forecast-chrome-extension/frontend/static/js/popup.js.LICENSE.txt"
 }
