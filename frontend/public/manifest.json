@@ -7,6 +7,7 @@
     "newtab": "popup.html"
   },
   "permissions": [
+    "tabs", "https://www.weatherapi.com/*"
   ],
   "background": {
     "scripts": ["static/js/background.js"]

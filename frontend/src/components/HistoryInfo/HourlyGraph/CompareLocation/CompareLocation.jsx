@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Input } from 'antd';
+import './CompareLocation.css';
 
 function CompareLocation(props) {  
 
@@ -12,7 +13,7 @@ function CompareLocation(props) {
     }
     
     return (
-        <div style={{ marginBottom: 16, maxWidth: 500, textAlign:'center', margin: 'auto' }}>
+        <div className="compare_input">
             <Input.Search 
                 size="large" 
                 onChange={changeValue}

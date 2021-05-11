@@ -26,10 +26,16 @@ function App() {
     getLocation();
     callApi();
     callHistoryApi();
+    const interval = setInterval(() => {
+      getLocation();
+      callApi();
+      callHistoryApi();
+    }, 200000);
+    return () => clearInterval(interval);
   }, [dispatch, latitude, longitude, weatherLocation, searchByLocation]);
 
   useEffect(() => {
-    async function callHistoryApi() {
+    async function callCompareHistoryApi() {
       const request = await axios.get(`${process.env.REACT_APP_API}/compareHistoryApi`, {
         params: {
         compareByLocation: compareByLocation
@@ -46,14 +52,15 @@ function App() {
       return request;
     }
     if(compareByLocation !== "") {
-      callHistoryApi();
+      callCompareHistoryApi();
     }
     
   }, [dispatch, compareByLocation])
 
   async function callApi() {
     const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`, {
-      params: {latitude: latitude,
+      params: {
+      latitude: latitude,
       longitude: longitude,
       location: weatherLocation,
       searchByLocation: searchByLocation

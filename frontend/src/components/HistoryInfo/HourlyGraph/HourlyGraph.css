@@ -38,3 +38,13 @@ font-size: 14px;
 font-weight: bold;
 }
   
+.chart_wrapper {
+  background: #ffffffed;
+  box-shadow: 0 2px 6px 0 rgb(125 125 125 / 10%);
+  width: auto;
+  margin: auto;
+  display: inline-block;
+  padding: 40px;
+  position: relative;
+  z-index: 1;
+}

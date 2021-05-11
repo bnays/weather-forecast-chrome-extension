@@ -1,4 +1,15 @@
 .local_time {
     font-size: 60px;
     min-height: 94px;
+    font-family: 'Open Sans', sans-serif;
+    letter-spacing: -2px;
+    margin-bottom: 0;
+    padding: 10px 0;
+}
+.weather_container {
+    width: 500px;
+    margin: 20px auto;
+}
+h3 {
+    font-family: 'Open Sans', sans-serif;
 }

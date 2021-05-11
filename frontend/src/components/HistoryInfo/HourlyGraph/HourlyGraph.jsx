@@ -10,7 +10,7 @@ function HourlyGraph(props) {
     
     useEffect(() => {
         let hourDataArray = [];
-
+        let data = [];
         const temperatureUnit = temperatureScale === "celsius" ? "°C" : "°F";
         
         historyInfo.forecast.forecastday.map((item, index) => {
@@ -46,41 +46,7 @@ function HourlyGraph(props) {
             }); 
         }
 
-        const data = hourDataArray;
-
-        // var data = [
-        //     {
-        //       name: "USA",
-        //       values: [
-        //         { date: "2000-01-10 01:00", temp: "100" },
-        //         { date: "2001-01-10 01:00", temp: "110" },
-        //         { date: "2002-01-10 01:00", temp: "145" },
-        //         { date: "2003-01-10 01:00", temp: "241" },
-        //         { date: "2004-01-10 01:00", temp: "101" },
-        //         { date: "2005-01-10 01:00", temp: "90" },
-        //         { date: "2006-01-10 01:00", temp: "10" },
-        //         { date: "2007-01-10 01:00", temp: "35" },
-        //         { date: "2008-01-10 01:00", temp: "21" },
-        //         { date: "2009-01-10 01:00", temp: "201" }
-        //       ]
-        //     },
-        //     {
-        //       name: "Canada",
-        //       values: [
-        //         { date: "2000-01-10 01:00", temp: "200" },
-        //         { date: "2001-01-10 01:00", temp: "120" },
-        //         { date: "2002-01-10 01:00", temp: "33" },
-        //         { date: "2003-01-10 01:00", temp: "21" },
-        //         { date: "2004-01-10 01:00", temp: "51" },
-        //         { date: "2005-01-10 01:00", temp: "190" },
-        //         { date: "2006-01-10 01:00", temp: "120" },
-        //         { date: "2007-01-10 01:00", temp: "85" },
-        //         { date: "2008-01-10 01:00", temp: "221" },
-        //         { date: "2009-01-10 01:00", temp: "101" }
-        //       ]
-        //     }
-        //   ];
-
+        data = hourDataArray;
 
         if(data[0] && data[0] !== undefined) {
             var width = 900;
@@ -306,7 +272,7 @@ function HourlyGraph(props) {
         }, [temperatureScale, historyInfo, compareHistoryInfo, weatherLocation]);
 
     return (
-        <div>
+        <div className="chart_wrapper">
             <CompareLocation getCompareByLocation={getCompareByLocation} clearCompareByLocation={clearCompareByLocation}/>
             <div id="chart" />
         </div>

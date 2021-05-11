@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import CustomLocationInput from './CustomLocationInput/CustomLocationInput';
+import { Row, Col } from 'antd';
 import './LocationInfo.css'
 
 function LocationInfo(props) {
@@ -10,7 +11,6 @@ function LocationInfo(props) {
 
     useEffect(() => {
         const date = new Date();
-        // const dayInWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
         setCurrentDay(date.toDateString());
 
         const interval = setInterval(() => {
@@ -25,21 +25,32 @@ function LocationInfo(props) {
 
     return (
         locationInfo &&
-        <div>
+        <div className="container">
             <h1 className="local_time">{localTime}</h1>
-            <h3 className="current_day">{currentDay}</h3>
-            <h3 className="location">{locationInfo.location.name}, {locationInfo.location.country}</h3>
+            
             <div className="weather_condition">
                 <CustomLocationInput getWeatherByLocation={getWeatherByLocation}></CustomLocationInput>
-                <div className="row">
-                    <div className="col-md-6">
-                        <img src={locationInfo.current.condition.icon} alt="" />
-                    </div>
-                    <div className="col-md-6">
-                        <h3>{ temperatureScale === 'celsius' ? locationInfo.current.temp_c+"°C" : locationInfo.current.temp_f+"°F" }</h3>
-                    </div>
+                <div className="weather_container">
+                    <Row>
+                        <Col span={8} xs={{ order: 1 }} sm={{ order: 2 }} md={{ order: 3 }} lg={{ order: 4 }}>
+                            <div className="location">
+                                <h3 className="current_day">{currentDay}</h3>
+                                <h3 className="location">{locationInfo.location.name}, {locationInfo.location.country}</h3>
+                            </div>
+                        </Col>
+                        <Col span={8} xs={{ order: 2 }} sm={{ order: 1 }} md={{ order: 4 }} lg={{ order: 3 }}>
+                            <div className="weather_info_image">
+                                <img src={locationInfo.current.condition.icon} alt="" />
+                            </div>
+                        </Col>
+                        <Col span={8} xs={{ order: 3 }} sm={{ order: 4 }} md={{ order: 2 }} lg={{ order: 1 }}>
+                            <div className="weather_info">
+                                <h3>{ temperatureScale === 'celsius' ? locationInfo.current.temp_c+"°C" : locationInfo.current.temp_f+"°F" }</h3>
+                                <h3>{locationInfo.current.condition.text}</h3>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
-                <h3>{locationInfo.current.condition.text}</h3>
             </div>
         </div>
     )
