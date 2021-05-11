@@ -32,7 +32,7 @@ function Home(props) {
         const date = new Date();
         const hour = date.getHours();
         console.log(hour);
-        if(hour < 6 || hour >= 13 ) {
+        if(hour < 6 || hour >= 18 ) {
             setFillColor1("gray");
             setFillColor2("black");
             setSvgStyle('76%');
