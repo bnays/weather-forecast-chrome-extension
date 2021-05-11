@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "homepage": "http://bnays.github.io/weather-forecast-chrome-extension",
+  "homepage": "http://bnays.github.io/weather-forecast-chrome-extension/frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
