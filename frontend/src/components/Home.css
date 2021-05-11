@@ -27,10 +27,10 @@
 
 .sun {
     position: fixed;
-    bottom: 200px;
-    left: 0;
+    top: 100px;
+    left: -50px;
     z-index: 0;
-    transform: scale(0.7);
+    transform: scale(0.4);
     transition: all 1.5s ease-in-out;
 }
 svg.sun circle{

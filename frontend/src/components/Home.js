@@ -35,7 +35,7 @@ function Home(props) {
         if(hour < 6 || hour >= 18 ) {
             setFillColor1("gray");
             setFillColor2("black");
-            setSvgStyle('76%');
+            setSvgStyle('82%');
             setWrapperBackgroundColor('#567e9e');
         }
         else {

@@ -45,6 +45,6 @@ font-weight: bold;
   margin: auto;
   display: inline-block;
   padding: 40px;
-  position: relative;
-  z-index: 1;
+  /* position: relative;
+  z-index: 1; */
 }
