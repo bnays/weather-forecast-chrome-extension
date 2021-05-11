@@ -7,89 +7,150 @@ import Home from '../../components/Home';
 import 'antd/dist/antd.css';
 import { BrowserRouter as Router } from "react-router-dom";
 import { notification } from 'antd';
+import GitHubLogin from 'react-github-login';
+
 
 function App() {
-
+  
   const [locationInfo, setLocationInfo] = useState("");
   const [historyInfo, setHistoryInfo] = useState("");
   const [compareHistoryInfo, setCompareHistoryInfo] = useState("");
-  // const [currentDay, setCurrentDay] = useState("");
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
   const [weatherLocation, setWeatherLocation] = useState("");
   const [searchByLocation, setSearchByLocation] = useState(false);
   const [compareByLocation, setCompareByLocation] = useState("");
-
+  const [LoggedIn, setLoggedIn] = useState(false);
+  
   const dispatch = useDispatch();
   
+  const onSuccess = response => {
+    authenticateGithub(response);
+    openNotification('success', 'Success', "Logged In Successfully.");
+  }
+
+  const onFailure = response => {
+    openNotification('error', 'Error', "Authentication Failed. Please try again.");
+  }
+
+  async function authenticateGithub(response) {
+    const request = await axios.get(`${process.env.REACT_APP_API}/authenticate`, {
+      params: {
+      code: response.code,
+    }
+    }).then(res => {
+      window.localStorage.setItem('github-access-token', res.data.access_token);
+      setLoggedIn(true);
+    });
+    return request;
+  }
+
+  async function checkAuthentication() {
+    const request = await axios.get(`${process.env.REACT_APP_API}/checkAuthenticate`, {
+      params: {
+        access_token: window.localStorage.getItem('github-access-token'),
+    }
+    }).then(res => {
+      if(res.data.success) {
+        setLoggedIn(true);
+      }
+      else {
+        setLoggedIn(false);
+      }
+    });
+    return request;
+  }
+
   useEffect(() => {
-    getLocation();
-    callApi();
-    callHistoryApi();
-    const interval = setInterval(() => {
+    checkAuthentication();
+  }, []);
+
+  useEffect(() => {
+    if(LoggedIn) {
       getLocation();
       callApi();
       callHistoryApi();
-    }, 200000);
-    return () => clearInterval(interval);
-  }, [dispatch, latitude, longitude, weatherLocation, searchByLocation]);
+      const interval = setInterval(() => {
+        getLocation();
+        callApi();
+        callHistoryApi();
+      }, 200000);
+      return () => clearInterval(interval);
+    }
+  }, [dispatch, latitude, longitude, weatherLocation, searchByLocation, LoggedIn]);
 
   useEffect(() => {
-    async function callCompareHistoryApi() {
-      const request = await axios.get(`${process.env.REACT_APP_API}/compareHistoryApi`, {
-        params: {
-        compareByLocation: compareByLocation
+    if(LoggedIn) {
+      if(compareByLocation !== "") {
+        callCompareHistoryApi();
       }
-      }).then(res => {
-        if(res.data.error) {
-          openNotification('error');
-        }
-        else{
-          setCompareHistoryInfo(res.data);
-          dispatch(getCompareHistoricalData(res.data));
-        }
-      });
-      return request;
-    }
-    if(compareByLocation !== "") {
-      callCompareHistoryApi();
     }
     
-  }, [dispatch, compareByLocation])
+  }, [dispatch, compareByLocation, LoggedIn])
 
   async function callApi() {
     const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`, {
       params: {
+      access_token: window.localStorage.getItem('github-access-token'),
       latitude: latitude,
       longitude: longitude,
       location: weatherLocation,
       searchByLocation: searchByLocation
     }
     }).then(res => {
-      if(res.data.error) {
-        openNotification('error');
-      }
-      else{
-        setLocationInfo(res.data);
-        dispatch(getCurrentData(res.data));
+      if(res.data === "Authentication Failed") {}
+      else {
+        if(res.data.error) {
+          openNotification('error', 'Error', "Location Not Found");
+        }
+        else{
+          setLocationInfo(res.data);
+          dispatch(getCurrentData(res.data));
+        }
       }
     });
     return request;
   }
   async function callHistoryApi() {
     const request = await axios.get(`${process.env.REACT_APP_API}/historyApi`, {
-      params: {latitude: latitude,
+      params: {
+      access_token: window.localStorage.getItem('github-access-token'),
+      latitude: latitude,
       longitude: longitude,
       location: weatherLocation,
       searchByLocation: searchByLocation
     }
     }).then(res => {
-      if(res.data.error) {
-        openNotification('error');
+      if(res.data === "Authentication Failed") {}
+      else {
+        if(res.data.error) {
+          // openNotification('error', 'Error', "Location Not Found");
+        }
+        else{
+          setHistoryInfo(res.data);
+          dispatch(getHistoricalData(res.data));
+        }
       }
-      else{
-        setHistoryInfo(res.data);
-        dispatch(getHistoricalData(res.data));
+    });
+    return request;
+  }
+
+  async function callCompareHistoryApi() {
+    const request = await axios.get(`${process.env.REACT_APP_API}/compareHistoryApi`, {
+      params: {
+      access_token: window.localStorage.getItem('github-access-token'),
+      compareByLocation: compareByLocation
+    }
+    }).then(res => {
+      if(res.data === "Authentication Failed") {}
+      else {
+        if(res.data.error) {
+          openNotification('error', 'Error', "Location Not Found");
+        }
+        else{
+          setCompareHistoryInfo(res.data);
+          dispatch(getCompareHistoricalData(res.data));
+        }
       }
     });
     return request;
@@ -118,28 +179,46 @@ function App() {
     setCompareByLocation(location);
   }
 
-  const openNotification = () => {
-    notification.error({
-      message: `Error`,
-      description: 'Location Not Found.',
-      placement: 'bottomRight',
-      duration: 5,
-    });
+  const openNotification = (type, message, description) => {
+    if(type === "error") {
+      notification.error({
+        message: message,
+        description: description,
+        placement: 'bottomRight',
+        duration: 5,
+      });
+    }
+    else {
+      notification.success({
+        message: message,
+        description: description,
+        placement: 'bottomRight',
+        duration: 5,
+      });
+    }
   };
 
   return (
-    locationInfo && historyInfo &&
     <Router>
       <div className="App">
-        <Home 
-          locationInfo={locationInfo} 
-          historyInfo={historyInfo} 
-          getWeatherByLocation={getWeatherByLocation} 
-          getCompareByLocation={getCompareByLocation}
-          compareHistoryInfo={compareHistoryInfo}
-          weatherLocation={weatherLocation}
-          clearCompareByLocation={clearCompareByLocation}
-        />
+        { !LoggedIn &&
+          <GitHubLogin clientId="c395375be0b12688c9a8"
+          onSuccess={onSuccess}
+          redirectUri=""
+          onFailure={onFailure}/> 
+        }
+        
+        { LoggedIn && locationInfo && historyInfo &&
+          <Home 
+            locationInfo={locationInfo} 
+            historyInfo={historyInfo} 
+            getWeatherByLocation={getWeatherByLocation} 
+            getCompareByLocation={getCompareByLocation}
+            compareHistoryInfo={compareHistoryInfo}
+            weatherLocation={weatherLocation}
+            clearCompareByLocation={clearCompareByLocation}
+          />
+        }
       </div>
     </Router>
   );
