@@ -76,6 +76,8 @@ After the project has been build, you can find the build folder inside frontend 
 
 ## Note
 
+You will need to keep the node server running for the chrome extension to work.
+
 Don't forget to create the .env file and paste your api as :  APP_KEY = 'Your api key here'. <br/>
 
 Please do restart server if you make any changes to the server.
