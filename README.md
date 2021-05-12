@@ -12,11 +12,6 @@ Go into frontend directory and execute following commands.<br />
 
 1. npm install
 
-### `Start Client (React)`
-
-2. npm start
-
-
 ### `Install Server (Node)`
 
 Go into server directory and run following commands.<br />
@@ -47,6 +42,14 @@ Open the project in editor such as VS Code.
 
 1. npm start
 
+This will be served at port 5000. i.e. http://localhost:5000/
+
+### `Start Client (React)`
+
+2. npm start
+
+This will be served at port 3000. i.e. http://localhost:3000/
+
 ## Deploy as chrome extension.
 
 ### `Build react project`
@@ -59,11 +62,11 @@ After the project has been build, you can find the build folder inside frontend 
 
 2. Open Chrome Browser and navigate to Extensions.
 
-chrome://extensions/
+    chrome://extensions/
 
 3. Click on 'Load unpacked' button which will open a file explorer.
 
-4. On File explorer, navigate to the build folder in frontend directory.
+4. On File explorer, navigate to the 'build' folder in frontend directory.
 
 5. Select the build directory by clicking on "Select Folder".
 
