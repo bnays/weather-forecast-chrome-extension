@@ -7,7 +7,7 @@
     "newtab": "popup.html"
   },
   "permissions": [
-    "tabs", "https://www.weatherapi.com/*"
+    "tabs", "identity"
   ],
   "background": {
     "scripts": ["static/js/background.js"]
@@ -15,7 +15,7 @@
   "content_scripts": [{
     "js": [ "static/js/content.js" ],
     "matches": [
-      "http://*.example.com/*", "https://*.example.com/*"
+      "http://localhost:3000/*"
     ]
   }],
   "icons": {
