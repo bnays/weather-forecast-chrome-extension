@@ -4,7 +4,7 @@ import './CompareLocation.css';
 
 function CompareLocation(props) {  
 
-    const { getCompareByLocation, clearCompareByLocation } = props;
+    const { getCompareByLocation } = props;
 
     const [searchTerm, setSearchTerm] = useState('');
 

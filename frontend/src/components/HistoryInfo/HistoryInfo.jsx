@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-// import HourlyG2 from './HourlyGraph/HourlyG2';
+import React from 'react'
 import HourlyGraph from './HourlyGraph/HourlyGraph';
 
 function HistoryInfo(props) {

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import LocationInfo from './LocationInfo/LocationInfo'
 import SearchBox from './SearchBox/SearchBox'
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout } from 'antd';
 import './Home.css';
 import TemperatureScaleSelect from './LocationInfo/TemperatureScaleSelect/TemperatureScaleSelect';
 import HistoryInfo from './HistoryInfo/HistoryInfo';
 
-const { Header, Content, Footer } = Layout;
+const { Content } = Layout;
 
 function Home(props) {
     const { locationInfo, historyInfo, getWeatherByLocation, getCompareByLocation, compareHistoryInfo, weatherLocation, clearCompareByLocation } = props;
@@ -31,7 +31,6 @@ function Home(props) {
     const getHour = () => {
         const date = new Date();
         const hour = date.getHours();
-        console.log(hour);
         if(hour < 6 || hour >= 18 ) {
             setFillColor1("gray");
             setFillColor2("black");
@@ -84,7 +83,6 @@ function Home(props) {
                             />
                         </div>
                 </Content>
-                {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
             </Layout>
         </div>
     )

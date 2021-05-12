@@ -1,6 +1,6 @@
 import { FETCH_CURRENT_DATA, FETCH_HISTORIC_DATA, FETCH_COMPARE_HISTORIC_DATA } from '../constants/actionTypes';
 
-export default (account = [], action) => {
+const weather = (weather = [], action) => {
   switch (action.type) {
     case FETCH_CURRENT_DATA:
       return action.payload;
@@ -9,7 +9,8 @@ export default (account = [], action) => {
     case FETCH_COMPARE_HISTORIC_DATA:
       return action.payload;
     default:
-      return account;
+      return weather;
   }
 };
 
+export default weather

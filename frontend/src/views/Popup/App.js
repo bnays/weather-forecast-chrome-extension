@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import './App.css';
-import { getCurrentData, getHistoricalData, getCompareHistoricalData } from '../../actions/account';
+import { getCurrentData, getHistoricalData, getCompareHistoricalData } from '../../actions/weather';
 import Home from '../../components/Home';
 import 'antd/dist/antd.css';
 import { BrowserRouter as Router } from "react-router-dom";
@@ -23,6 +23,45 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+      async function callApi() {
+        const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`, {
+          params: {
+          latitude: latitude,
+          longitude: longitude,
+          location: weatherLocation,
+          searchByLocation: searchByLocation
+        }
+        }).then(res => {
+            if(res.data.error) {
+              openNotification('error', 'Error', res.data.error.message);
+            }
+            else{
+              setLocationInfo(res.data);
+              dispatch(getCurrentData(res.data));
+            }
+        });
+        return request;
+      }
+      async function callHistoryApi() {
+        const request = await axios.get(`${process.env.REACT_APP_API}/historyApi`, {
+          params: {
+          latitude: latitude,
+          longitude: longitude,
+          location: weatherLocation,
+          searchByLocation: searchByLocation
+        }
+        }).then(res => {
+            if(res.data.error) {
+              // openNotification('error', 'Error', res.data.error.message);
+            }
+            else{
+              setHistoryInfo(res.data);
+              dispatch(getHistoricalData(res.data));
+            }
+        });
+        return request;
+      }
+
       getLocation();
       callApi();
       callHistoryApi();
@@ -35,66 +74,26 @@ function App() {
   }, [dispatch, latitude, longitude, weatherLocation, searchByLocation]);
 
   useEffect(() => {
-      if(compareByLocation !== "") {
-        callCompareHistoryApi();
+    async function callCompareHistoryApi() {
+      const request = await axios.get(`${process.env.REACT_APP_API}/compareHistoryApi`, {
+        params: {
+        compareByLocation: compareByLocation
       }
+      }).then(res => {
+          if(res.data.error) {
+            openNotification('error', 'Error', res.data.error.message);
+          }
+          else{
+            setCompareHistoryInfo(res.data);
+            dispatch(getCompareHistoricalData(res.data));
+          }
+      });
+      return request;
+    }
+    if(compareByLocation !== "") {
+      callCompareHistoryApi();
+    }
   }, [dispatch, compareByLocation])
-
-  async function callApi() {
-    const request = await axios.get(`${process.env.REACT_APP_API}/currentWeather`, {
-      params: {
-      latitude: latitude,
-      longitude: longitude,
-      location: weatherLocation,
-      searchByLocation: searchByLocation
-    }
-    }).then(res => {
-        if(res.data.error) {
-          openNotification('error', 'Error', "Location Not Found");
-        }
-        else{
-          setLocationInfo(res.data);
-          dispatch(getCurrentData(res.data));
-        }
-    });
-    return request;
-  }
-  async function callHistoryApi() {
-    const request = await axios.get(`${process.env.REACT_APP_API}/historyApi`, {
-      params: {
-      latitude: latitude,
-      longitude: longitude,
-      location: weatherLocation,
-      searchByLocation: searchByLocation
-    }
-    }).then(res => {
-        if(res.data.error) {
-          // openNotification('error', 'Error', "Location Not Found");
-        }
-        else{
-          setHistoryInfo(res.data);
-          dispatch(getHistoricalData(res.data));
-        }
-    });
-    return request;
-  }
-
-  async function callCompareHistoryApi() {
-    const request = await axios.get(`${process.env.REACT_APP_API}/compareHistoryApi`, {
-      params: {
-      compareByLocation: compareByLocation
-    }
-    }).then(res => {
-        if(res.data.error) {
-          openNotification('error', 'Error', "Location Not Found");
-        }
-        else{
-          setCompareHistoryInfo(res.data);
-          dispatch(getCompareHistoricalData(res.data));
-        }
-    });
-    return request;
-  }
 
   const getLocation = () => {
     if(navigator.geolocation) {
@@ -112,7 +111,6 @@ function App() {
 
   const clearCompareByLocation = () => {
     setSearchByLocation(true);
-    callHistoryApi();
   }
 
   const getCompareByLocation = (location) => {

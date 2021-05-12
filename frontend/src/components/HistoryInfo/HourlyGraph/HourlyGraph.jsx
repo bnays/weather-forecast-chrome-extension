@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import * as d3 from "d3";
 import './HourlyGraph.css'
 import CompareLocation from './CompareLocation/CompareLocation';
@@ -6,7 +6,7 @@ import CompareLocation from './CompareLocation/CompareLocation';
 
 function HourlyGraph(props) {
 
-    const { historyInfo, compareHistoryInfo, temperatureScale, getCompareByLocation, weatherLocation, clearCompareByLocation } = props;
+    const { historyInfo, compareHistoryInfo, temperatureScale, getCompareByLocation, clearCompareByLocation } = props;
     
     useEffect(() => {
         let hourDataArray = [];
@@ -160,7 +160,6 @@ function HourlyGraph(props) {
                 .style("cursor", "none");
             });
 
-            console.log(path.nodes()[0].getTotalLength());
             var totalLength = [];
             if(path.nodes()[1]) {
                 totalLength = [path.nodes()[0].getTotalLength(), path.nodes()[1].getTotalLength()];
@@ -202,7 +201,7 @@ function HourlyGraph(props) {
                 div.transition()		
                     .duration(200)		
                     .style("opacity", .9);
-                    div.html(formatCount(d.temp) + " "+temperatureUnit+"" + "<br/>" + formatTime(d.date))	
+                    div.html(formatCount(d.temp) +temperatureUnit+ "<br/>" + formatTime(d.date))	
                     .style("left", (event.pageX - 0) + "px")
                         .style("top", (event.pageY + 0) + "px");
             })
@@ -269,7 +268,7 @@ function HourlyGraph(props) {
         }
 
     
-        }, [temperatureScale, historyInfo, compareHistoryInfo, weatherLocation]);
+        }, [temperatureScale, historyInfo, compareHistoryInfo]);
 
     return (
         <div className="chart_wrapper">

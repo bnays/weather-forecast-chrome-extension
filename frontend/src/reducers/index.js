@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
 
-import account from './account';
+import weather from './weather';
 
-export const reducers = combineReducers({ account });
+export const reducers = combineReducers({ weather });

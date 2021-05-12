@@ -22,7 +22,6 @@ function SearchBox() {
    }
 
    const changeValue = (e) => {
-      console.log(e.target.value);
       setSearchTerm(e.target.value);
    }
 

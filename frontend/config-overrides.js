@@ -46,7 +46,7 @@ function override(config, env) {
   // Custom HtmlWebpackPlugin instance for index (popup) page
   const indexHtmlPlugin = new HtmlWebpackPlugin({
     inject: true,
-    chunks: ['popup', 'content'],
+    chunks: ['popup'],
     template: paths.appHtml,
     filename: 'popup.html',
     minify: isEnvProduction && minifyOpts,
